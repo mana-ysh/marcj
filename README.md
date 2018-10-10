@@ -29,3 +29,10 @@ EOS
 丹生 明里 は 可愛い
 松田 好 花 も かわいい
 ```
+
+Output as normalized
+```
+⟩⟩⟩ cat test/test.txt.sudachi | marcj -n
+丹生 明里 は 可愛い
+松田 好 花 も 可愛い
+```

@@ -28,13 +28,18 @@ func main() {
 			Value: "sudachi",
 			Usage: "Analyzer tool you used",
 		},
+
+		cli.BoolFlag{
+			Name:  "normalize, n",
+			Usage: "Flag for normalization form",
+		},
 	}
 
 	// action
 	app.Action = func(c *cli.Context) error {
 		switch c.String("tool") {
 		case "sudachi":
-			runSudachi(bufio.NewReader(os.Stdin))
+			runSudachi(bufio.NewReader(os.Stdin), c.Bool("normalize"))
 		default:
 			runDefault() // raise error
 		}
@@ -44,7 +49,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func runSudachi(reader *bufio.Reader) {
+func runSudachi(reader *bufio.Reader, normflag bool) {
 	sent := []string{}
 	for {
 		input, err := reader.ReadString('\n')
@@ -59,7 +64,18 @@ func runSudachi(reader *bufio.Reader) {
 			fmt.Println(strings.Join(sent, " "))
 			sent = []string{}
 		} else {
-			sent = append(sent, strings.Split(input, Splitter)[0])
+			info := strings.Split(input, Splitter)
+			if len(info) != 3 {
+				fmt.Println("File may be broken or Invalid format")
+				os.Exit(1)
+			}
+			surface := ""
+			if normflag {
+				surface += info[2]
+			} else {
+				surface += info[0]
+			}
+			sent = append(sent, surface)
 		}
 	}
 

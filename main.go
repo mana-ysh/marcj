@@ -133,7 +133,7 @@ func runMeCabIPADic(reader *bufio.Reader, normflag bool) {
 			sent = []string{}
 		} else {
 			info := strings.Split(input, Splitter)
-			if len(info) != 7 {
+			if len(info) != 2 {
 				fmt.Println("File may be broken or Invalid format")
 				os.Exit(1)
 			}

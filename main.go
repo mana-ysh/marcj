@@ -40,6 +40,10 @@ func main() {
 		switch c.String("tool") {
 		case "sudachi":
 			runSudachi(bufio.NewReader(os.Stdin), c.Bool("normalize"))
+		case "mecabuni":
+			runMeCabUniDic(bufio.NewReader(os.Stdin), c.Bool("normalize"))
+		case "mecabipa":
+			runMeCabIPADic(bufio.NewReader(os.Stdin), c.Bool("normalize"))
 		default:
 			runDefault() // raise error
 		}
@@ -78,7 +82,72 @@ func runSudachi(reader *bufio.Reader, normflag bool) {
 			sent = append(sent, surface)
 		}
 	}
+}
 
+func runMeCabUniDic(reader *bufio.Reader, normflag bool) {
+	sent := []string{}
+	for {
+		input, err := reader.ReadString('\n')
+
+		if err != nil && err == io.EOF {
+			break
+		}
+
+		input = strings.TrimRight(input, "\n")
+
+		if input == EOSString {
+			fmt.Println(strings.Join(sent, " "))
+			sent = []string{}
+		} else {
+			info := strings.Split(input, Splitter)
+			if len(info) != 7 {
+				fmt.Println("File may be broken or Invalid format")
+				os.Exit(1)
+			}
+			surface := ""
+			if normflag {
+				fmt.Println("Normalized form not supported yet")
+				os.Exit(1)
+				surface += info[2]
+			} else {
+				surface += info[0]
+			}
+			sent = append(sent, surface)
+		}
+	}
+}
+
+func runMeCabIPADic(reader *bufio.Reader, normflag bool) {
+	sent := []string{}
+	for {
+		input, err := reader.ReadString('\n')
+
+		if err != nil && err == io.EOF {
+			break
+		}
+
+		input = strings.TrimRight(input, "\n")
+
+		if input == EOSString {
+			fmt.Println(strings.Join(sent, " "))
+			sent = []string{}
+		} else {
+			info := strings.Split(input, Splitter)
+			if len(info) != 7 {
+				fmt.Println("File may be broken or Invalid format")
+				os.Exit(1)
+			}
+			surface := ""
+			if normflag {
+				fmt.Println("Normalized form not supported yet")
+				os.Exit(1)
+				surface += info[2]
+			} else {
+				surface += info[0]
+			}
+			sent = append(sent, surface)
+		}
+	}
 }
 
 func runDefault() {

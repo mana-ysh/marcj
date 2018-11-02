@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	EOSString = "EOS"
-	Splitter  = "\t"
+	EOSString     = "EOS"
+	Splitter      = "\t"
+	MorphSplitter = ","
 )
 
 func main() {
@@ -33,13 +34,18 @@ func main() {
 			Name:  "normalize, n",
 			Usage: "Flag for normalization form",
 		},
+
+		cli.BoolFlag{
+			Name:  "morph, m",
+			Usage: "Flag for morphological-concatenated form",
+		},
 	}
 
 	// action
 	app.Action = func(c *cli.Context) error {
 		switch c.String("tool") {
 		case "sudachi":
-			runSudachi(bufio.NewReader(os.Stdin), c.Bool("normalize"))
+			runSudachi(bufio.NewReader(os.Stdin), c.Bool("normalize"), c.Bool("morph"))
 		case "mecabuni":
 			runMeCabUniDic(bufio.NewReader(os.Stdin), c.Bool("normalize"))
 		case "mecabipa":
@@ -53,7 +59,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func runSudachi(reader *bufio.Reader, normflag bool) {
+func runSudachi(reader *bufio.Reader, normflag bool, morphflag bool) {
 	sent := []string{}
 	for {
 		input, err := reader.ReadString('\n')
@@ -76,6 +82,8 @@ func runSudachi(reader *bufio.Reader, normflag bool) {
 			surface := ""
 			if normflag {
 				surface += info[2]
+			} else if morphflag {
+				surface += info[0] + MorphSplitter + info[1] + MorphSplitter + info[2]
 			} else {
 				surface += info[0]
 			}
